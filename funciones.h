@@ -2,20 +2,22 @@
 #define  FUNCIONES_H_
 
 struct Producto{
+    
+    float precio_compra;
+    int codigo;
+    int inventario;
     char nombre[50];
     char categoria[50];
     char marca[50];
-    int codigo;
-    float precio_compra;
-    int inventario;
 };
 
 
 struct RegistroVenta {
-  char vendedor[20];
-  char fecha[20];
+  
   int precioventa;
   char local[20];
+  char vendedor[20];
+  char fecha[20];
 };
 
 struct Bodeguero{

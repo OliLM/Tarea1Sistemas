@@ -2,7 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include<stdlib.h>
 
+int crearArchivo(char nombreArchivo[20],struct Usuario usuario, char contraseña[10]);
+int crearArchivoVenta(char nombreArchivo[20], struct RegistroVenta registro);
+int crearArchivoProductos(char nombreArchivo[20], struct Producto producto);
 
 int main(void) {
   struct Admin admin;
@@ -34,21 +38,26 @@ int main(void) {
     scanf("%d", &opcion);
     switch (opcion) {
     case 1:
+      
       usuario = crearUsuario();
       printf("ingresa tu contraseña: \n");
       scanf("%s", contraseña);
+      char nombrearchivo[] = "usuarios.txt";
       if (strcmp(usuario.rol, "bodeguero") == 0) {
         bodeguero = registrarBodeguero(usuario.nombre, contraseña);
         printf("bodeguero registrado exitosamente\n");
         usrInit = true;
         bodeInit = true;
+        crearArchivo(nombrearchivo, usuario, contraseña);
         break;
       } else if (strcmp(usuario.rol, "vendedor") == 0) {
         vendedor = registrarVendedor(usuario.rol, contraseña);
         printf("vendedor registrado exitosamente\n");
+        crearArchivo(nombrearchivo, usuario, contraseña);
         vendeInit = true;
         break;
       }
+      
       printf("Rol invalido\n");
       break;
     case 2:
@@ -56,11 +65,13 @@ int main(void) {
       productInit = true;
       venta = vender(producto);
       ventaInit = true;
+      crearArchivoVenta("venta.txt", venta);
       disminuirInventario(producto);
       break;
     case 3:
       producto = CrearProducto(producto);  
       productInit = true;
+      crearArchivoProductos("producto.txt", producto);
       break;
     case 4:
       if (bodeInit) {
@@ -104,3 +115,82 @@ int main(void) {
   return 0;
 }
 
+int crearArchivo(char nombreArchivo[20], struct Usuario usuario, char contraseña[10])
+{
+      FILE *arch = fopen(nombreArchivo, "a"); 
+      if (arch == NULL) {
+          perror("Error al abrir el archivo");
+          exit(EXIT_FAILURE);
+      }
+
+      
+      fputs("\n--- Nuevo Usuario ---\n", arch); 
+      fputs("Nombre: ", arch);
+      fputs(usuario.nombre, arch);
+      fputs("\nRol: ", arch);
+      fputs(usuario.rol, arch);
+      fputs("\nContraseña: ", arch);
+      fputs(contraseña, arch);
+
+      fclose(arch);
+      printf("Se agregó el usuario al archivo con éxito.\n");
+    
+
+    return 0;
+}
+
+  
+int crearArchivoVenta(char nombreArchivo[20], struct RegistroVenta registro)
+  {
+        FILE *arch = fopen(nombreArchivo, "a"); 
+        if (arch == NULL) {
+            perror("Error al abrir el archivo");
+            exit(EXIT_FAILURE);
+        }
+
+        
+        fputs("\n--- Nuevo Registro de Venta ---\n", arch); 
+        fputs("Nombre vendedor: ", arch);
+        fputs(registro.vendedor, arch);
+        fputs("\nFecha de venta: ", arch);
+        fputs(registro.fecha, arch);
+        fputs("\nPrecio Venta: ", arch);
+        fprintf(arch,"Precio: %d\n",registro.precioventa);
+        fputs("\nLocal: ", arch);
+        fputs(registro.local, arch);
+
+        fclose(arch);
+        printf("Se agregó el usuario al archivo con éxito.\n");
+
+
+      return 0;
+  }
+    
+int crearArchivoProductos(char nombreArchivo[20], struct Producto producto)
+    {
+          FILE *arch = fopen(nombreArchivo, "a"); // Abrir el archivo en modo de adición
+          if (arch == NULL) {
+              perror("Error al abrir el archivo");
+              exit(EXIT_FAILURE);
+          }
+
+          
+          fputs("\n--- Nuevo Usuario ---\n", arch); 
+          fputs("Nombre: ", arch);
+          fputs(producto.nombre, arch);
+          fputs("\nCategoria: ", arch);
+          fputs(producto.categoria, arch);
+          fputs("\nMarca: ", arch);
+          fputs(producto.marca, arch);
+          fputs("\nCodigo: ", arch);
+          fprintf(arch,"Precio: %d\n",producto.codigo);
+          fputs("\nPrecio Compra: ", arch);
+          fprintf(arch,"Precio: %.2f\n",producto.precio_compra);
+
+
+          fclose(arch);
+          printf("Se agregó el usuario al archivo con éxito.\n");
+
+
+        return 0;
+    }
